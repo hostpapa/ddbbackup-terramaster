@@ -1,0 +1,14 @@
+title = "Data Deposit Box public package gate (DDB-447)"
+
+# gitleaks' own rules: keys, tokens, passwords. Our rules for what it doesn't
+# know is sensitive to us (internal IPs and hosts, build paths, email
+# addresses) are in custom_rules.py, beside this file: gitleaks' default
+# allowlist skips home and temporary directory paths, which those rules are
+# there to catch.
+#
+# The default allowlist also skips files by path: any path containing
+# "gitleaks.toml" (hence this file's name), pictures, node_modules/ and the
+# like. gate.sh therefore scans a copy where every file has a neutral name
+# (f000001.txt), so none of those exclusions can apply.
+[extend]
+useDefault = true

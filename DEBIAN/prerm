@@ -1,0 +1,17 @@
+#!/bin/bash
+# Runs as root under dpkg. $1 is remove, upgrade, deconfigure or failed-upgrade.
+set -e
+UNIT=ddbbackup.service
+case "$1" in
+    remove|deconfigure)
+        systemctl stop "$UNIT" || true
+        systemctl disable "$UNIT" || true
+        ;;
+    upgrade)
+        # Stop the old version before dpkg replaces its files, so it never runs
+        # on a mix of old and new ones. Don't disable it: the new version's
+        # postinst starts it again, and it must still start at boot.
+        systemctl stop "$UNIT" || true
+        ;;
+esac
+exit 0

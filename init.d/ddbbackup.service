@@ -1,0 +1,51 @@
+# Data Deposit Box for TerraMaster TOS 7. Shipped at
+# /usr/local/ddbbackup/init.d/ddbbackup.service; units under /etc/systemd/system
+# aren't allowed. ddb_launcher starts and supervises ddb_backup and ddb_wserv
+# and passes SIGTERM on to them, so systemd stopping the whole unit stops all
+# three; no process outlives a stop or an upgrade.
+[Unit]
+Description=Data Deposit Box backup agent
+After=network-online.target
+Wants=network-online.target
+StartLimitBurst=5
+StartLimitIntervalSec=60
+
+[Service]
+Type=simple
+User=ddbbackup
+Group=ddbbackup
+WorkingDirectory=/usr/local/ddbbackup
+EnvironmentFile=/usr/local/ddbbackup/ddbbackup.env
+ExecStart=/usr/local/ddbbackup/bin/ddb_launcher
+# Start it again if the launcher dies or fails (a crash, a failed fork), but
+# not after a stop: it exits 0 on SIGTERM and on the stop flag. With
+# StartLimitBurst, it gives up after 5 failed starts in a minute.
+Restart=on-failure
+RestartSec=10
+# /run/ddbbackup, for the stop flag and pid locks (DDB_RUN_DIR)
+RuntimeDirectory=ddbbackup
+TimeoutStartSec=30
+TimeoutStopSec=10
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+# The volumes are writable so a restore can put files back into the shared
+# folders the user granted; file permissions still decide which ones. "-"
+# ignores a volume the NAS doesn't have.
+ReadWritePaths=-/Volume1 -/Volume2 -/Volume3 -/Volume4 -/Volume5 -/Volume6 -/Volume7 -/Volume8
+ReadWritePaths=-/Volume9 -/Volume10 -/Volume11 -/Volume12 -/Volume13 -/Volume14 -/Volume15 -/Volume16
+# Except where the apps live: /usr/local/ddbbackup is /Volume<N>/@apps/ddbbackup,
+# so this package's binaries, settings and unit stay read-only, and so do the
+# other apps' files. A path inside another one overrides it.
+ReadOnlyPaths=-/Volume1/@apps -/Volume2/@apps -/Volume3/@apps -/Volume4/@apps
+ReadOnlyPaths=-/Volume5/@apps -/Volume6/@apps -/Volume7/@apps -/Volume8/@apps
+ReadOnlyPaths=-/Volume9/@apps -/Volume10/@apps -/Volume11/@apps -/Volume12/@apps
+ReadOnlyPaths=-/Volume13/@apps -/Volume14/@apps -/Volume15/@apps -/Volume16/@apps
+# Writable again inside it: data/ and logs/, the device's identity, settings
+# and logs.
+ReadWritePaths=/usr/local/ddbbackup/data /usr/local/ddbbackup/logs
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

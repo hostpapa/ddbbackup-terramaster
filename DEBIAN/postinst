@@ -1,0 +1,53 @@
+#!/bin/bash
+# Runs as root under dpkg. $1 is "configure"; on an upgrade $2 is the old version.
+set -e
+APPID=ddbbackup
+APP_DIR=/usr/local/$APPID
+UNIT=$APPID.service
+
+# The App Center creates the user from config.ini's "user" field. A manual
+# "dpkg -i" doesn't, so create it only when it's missing, as TerraMaster's own
+# template does.
+if ! id -u "$APPID" >/dev/null 2>&1; then
+    useradd --system --no-create-home --shell /usr/sbin/nologin "$APPID"
+fi
+
+# allusers lets the admin grant the app access to existing shared folders in
+# the TOS shared folder settings; nothing is readable until they do.
+if getent group allusers >/dev/null 2>&1; then
+    usermod -aG allusers "$APPID"
+fi
+
+# Writable by the service: the device's identity and settings, and its logs.
+# Kept across upgrades; never cleared here. Only the two directories: what's
+# in them is the service's own, and a recursive chown as root would also give
+# it any file hard-linked in there.
+mkdir -p "$APP_DIR/data" "$APP_DIR/logs"
+chown "$APPID:$APPID" "$APP_DIR/data" "$APP_DIR/logs"
+chmod 750 "$APP_DIR/data" "$APP_DIR/logs"
+# Shipped configuration: readable by the service, not writable.
+chown -R "root:$APPID" "$APP_DIR/config"
+chmod 750 "$APP_DIR/config"
+
+# The App Center registers init.d/$UNIT with systemd. A manual "dpkg -i"
+# doesn't, so link it only when systemd doesn't know the unit yet.
+systemctl daemon-reload
+if ! systemctl cat "$UNIT" >/dev/null 2>&1; then
+    systemctl link "$APP_DIR/init.d/$UNIT"
+fi
+
+case "$1" in
+    configure)
+        systemctl enable "$UNIT"
+        # The old prerm stopped the service on an upgrade; restart rather than
+        # start in case an older version's prerm didn't.
+        systemctl restart "$UNIT"
+        ;;
+    abort-upgrade|abort-remove|abort-deconfigure)
+        # An upgrade or removal failed after prerm stopped (and on remove,
+        # disabled) the service: dpkg keeps this version, so bring it back.
+        systemctl enable "$UNIT" || true
+        systemctl start "$UNIT" || true
+        ;;
+esac
+exit 0

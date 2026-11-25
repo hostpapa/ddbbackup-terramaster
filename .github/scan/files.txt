@@ -1,0 +1,31 @@
+# Every file in the public store repository (hostpapa/ddbbackup-terramaster),
+# and where publish_terramaster.sh takes it from (DDB-447). Nothing else is
+# published: a new file goes out only once it is added here, and the gate
+# (publish/gate.sh) fails if the repository holds anything not listed.
+#
+#   deb:<path>   from the built package, so it matches the release byte for byte
+#   ctl:<name>   from the package's DEBIAN control files
+#   src:<path>   from the source repository (published as just "src")
+#   list         this list
+#
+# The release workflow compares every deb:/ctl: file with the draft release's
+# package before publishing it.
+
+README.md                        src
+THIRD-PARTY-NOTICES.txt          deb:usr/local/ddbbackup/THIRD-PARTY-NOTICES.txt
+config.ini                       deb:usr/local/ddbbackup/config.ini
+ddbbackup.lang                   deb:usr/local/ddbbackup/ddbbackup.lang
+images/icons/ddbbackup.svg       deb:usr/local/ddbbackup/images/icons/ddbbackup.svg
+init.d/ddbbackup.service         deb:usr/local/ddbbackup/init.d/ddbbackup.service
+DEBIAN/postinst                  ctl:postinst
+DEBIAN/prerm                     ctl:prerm
+DEBIAN/postrm                    ctl:postrm
+
+.github/CODEOWNERS               src
+.github/workflows/scan.yml       src
+.github/workflows/release.yml    src
+.github/scan/files.txt           list
+.github/scan/gate.sh             src
+.github/scan/get-gitleaks.sh     src
+.github/scan/custom_rules.py     src
+.github/scan/gitleaks-config.toml src

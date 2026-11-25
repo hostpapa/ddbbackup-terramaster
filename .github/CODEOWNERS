@@ -1,0 +1,5 @@
+# Published to hostpapa/ddbbackup-terramaster as .github/CODEOWNERS by the
+# build server's publish script (DDB-447); change it at its source. A change
+# to main by pull request needs a review from this team; the build server's
+# releases don't go through pull requests.
+* @hostpapa/ddb

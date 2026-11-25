@@ -1,0 +1,181 @@
+[zh-cn]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."
+
+[zh-hk]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."
+
+[en-us]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."
+
+[fr-fr]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."
+
+[de-de]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."
+
+[it-it]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."
+
+[es-es]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."
+
+[hu-hu]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."
+
+[ja-jp]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."
+
+[ko-kr]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."
+
+[pl-pl]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."
+
+[ru-ru]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."
+
+[tr-tr]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."
+
+[pt-pt]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."
+
+[cs-cz]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."
+
+[da-dk]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."
+
+[nl-nl]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."
+
+[nb-no]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."
+
+[sv-se]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."
+
+[el-gr]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."
+
+[ro-ro]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."
+
+[th-th]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."
+
+[vi-vn]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."
+
+[id-id]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."
+
+[ar-sa]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."
+
+[he-il]
+name = "Data Deposit Box"
+auth = "Data Deposit Box Inc."
+descript = "Continuous, encrypted cloud backup of the shared folders you choose.</br>After installing, give the allusers group Read access to the shared folders to back up (Read/Write to restore into them) in the TOS shared folder settings, then open the app to sign in. TOS has no per-app access, so every member of allusers gets the same access to those folders."
+release_note = ""
+important = "Data Deposit Box can only back up the shared folders you give it access to."

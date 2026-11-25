@@ -1,0 +1,29 @@
+#!/bin/bash
+# Runs as root under dpkg. $1 is remove, purge, upgrade, ...
+set -e
+APPID=ddbbackup
+APP_DIR=/usr/local/$APPID
+case "$1" in
+    remove|purge)
+        # The link postinst made for a manual install, if any.
+        if [ -L "/etc/systemd/system/$APPID.service" ]; then
+            rm -f "/etc/systemd/system/$APPID.service"
+        fi
+        systemctl daemon-reload || true
+        ;;
+esac
+if [ "$1" = purge ]; then
+    # The device's identity, settings and logs. Never touches the shared
+    # folders it backed up. data/ and logs/ are directories this package
+    # created; a symlink there is left alone rather than followed.
+    for d in "$APP_DIR/data" "$APP_DIR/logs"; do
+        [ -L "$d" ] || rm -rf "$d"
+    done
+    rmdir "$APP_DIR" 2>/dev/null || true
+    # The account stays: the files it restored into the shares keep its uid,
+    # and a deleted account's uid can go to the next account created. Out of
+    # allusers, it loses the share access the admin granted; a reinstall puts
+    # it back.
+    gpasswd -d "$APPID" allusers >/dev/null 2>&1 || true
+fi
+exit 0
