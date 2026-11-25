@@ -1,0 +1,165 @@
+# The store repository's .github/workflows/release.yml (DDB-447). An admin
+# commits it there (the publishing App has no permission to change
+# workflows), and the build server's publish refuses while that copy differs
+# from this one: change it here first.
+#
+# Makes a draft release public only after checking it again. The build server
+# pushes main, creates the release as a draft with ddbbackup_x86_64.deb and
+# its .sha256, and pushes the tag last, which starts this workflow; nothing
+# here builds anything. Checked before publishing: the tag (the App's, on
+# main), the version is above every published release, the draft has
+# exactly those two assets, the checksum, the version (tag, package,
+# config.ini), every repository file taken from the package matches it byte
+# for byte, and the gate passes on the repository and the package, with the
+# denylist from the DDB_DENYLIST secret (checked against the build server's
+# by its SHA-256, which the build server puts in the tag's message). The
+# assets are read again just before publishing, so none can be swapped
+# during the checks (and the build server's publish doesn't touch a draft
+# while a release run is queued or running). If anything fails, the draft is
+# deleted, so nobody can publish it by hand; the build server's publish then
+# resumes, pushing the tag again. Releases are immutable once published.
+name: release
+
+# Only the publishing App can create or move tags (the ddb-tags ruleset).
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  release:
+    # The release environment holds DDB_DENYLIST and lets only main and v*
+    # tags use it.
+    if: startsWith(github.ref, 'refs/tags/v')
+    environment: release
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      TAG: ${{ github.ref_name }}
+      ASSET: ddbbackup_x86_64.deb
+      # The draft's assets, one per line, to see whether they changed.
+      ASSETS_JQ: '.assets | sort_by(.name) | .[] | "\(.id) \(.size) \(.digest) \(.name)"'
+    steps:
+      # The tag's message carries the build server's denylist SHA-256.
+      - name: Check the tag
+        run: |
+          [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "bad tag '$TAG'"; exit 1; }
+          obj=$(gh api "repos/$GH_REPO/git/ref/tags/$TAG" --jq '"\(.object.type) \(.object.sha)"')
+          [ "${obj%% *}" = tag ] || { echo "$TAG is not an annotated tag"; exit 1; }
+          want=$(gh api "repos/$GH_REPO/git/tags/${obj#* }" --jq .message |
+                 sed -n 's/^Denylist SHA-256 \([0-9a-f]\{64\}\)$/\1/p')
+          [ -n "$want" ] || { echo "$TAG's message has no denylist SHA-256"; exit 1; }
+          echo "DENYLIST_SHA256=$want" >> "$GITHUB_ENV"
+
+      - name: Check the version goes up
+        run: |
+          latest=$(gh release list --exclude-drafts --limit 1000 --json tagName \
+                     --jq '.[].tagName | select(test("^v[0-9]+\\.[0-9]+\\.[0-9]+$")) | ltrimstr("v")' |
+                   sort -V | tail -n 1)
+          if [ -n "$latest" ] && ! dpkg --compare-versions "${TAG#v}" gt "$latest"; then
+            echo "$TAG is not above the published v$latest: a store version only goes up."
+            exit 1
+          fi
+
+      - name: Find the draft
+        run: |
+          rels=$(gh api --paginate "repos/$GH_REPO/releases" --jq ".[] | select(.tag_name == \"$TAG\") | \"\(.id) \(.draft)\"")
+          if [ -z "$rels" ] || [ "$(wc -l <<< "$rels")" != 1 ] || [ "${rels#* }" != true ]; then
+            echo "Expected one draft release for $TAG, found (id, draft): ${rels:-none}"
+            exit 1
+          fi
+          echo "REL_ID=${rels% *}" >> "$GITHUB_ENV"
+
+      - name: Checkout the tag
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      # The build server tags only main's newest commit.
+      - name: Check the tag is on main
+        run: |
+          git merge-base --is-ancestor HEAD refs/remotes/origin/main ||
+            { echo "$TAG is not on main"; exit 1; }
+
+      - name: Get gitleaks
+        run: bash .github/scan/get-gitleaks.sh "$RUNNER_TEMP/gitleaks"
+
+      - name: Get the denylist
+        env:
+          DENYLIST: ${{ secrets.DDB_DENYLIST }}
+        run: |
+          [ -n "$DENYLIST" ] || { echo "The release environment has no DDB_DENYLIST secret."; exit 1; }
+          printf '%s\n' "$DENYLIST" > "$RUNNER_TEMP/denylist.txt"
+          have=$(python3 -I .github/scan/custom_rules.py --digest "$RUNNER_TEMP/denylist.txt")
+          if [ "$have" != "$DENYLIST_SHA256" ]; then
+            echo "DDB_DENYLIST differs from the build server's list: update the secret, then run the publish again (it resumes and pushes the tag again)."
+            exit 1
+          fi
+
+      - name: Download the draft
+        run: |
+          gh api "repos/$GH_REPO/releases/$REL_ID" --jq "$ASSETS_JQ" > "$RUNNER_TEMP/assets.txt"
+          names=$(cut -d' ' -f4- "$RUNNER_TEMP/assets.txt" | paste -sd' ')
+          [ "$names" = "$ASSET $ASSET.sha256" ] || { echo "unexpected assets: $names"; exit 1; }
+          gh release download "$TAG" -D "$RUNNER_TEMP/dl"
+          while read -r _ _ digest name; do
+            got=$(sha256sum < "$RUNNER_TEMP/dl/$name" | cut -d' ' -f1)
+            [ "$digest" = null ] || [ "$digest" = "sha256:$got" ] || { echo "$name doesn't match its digest"; exit 1; }
+          done < "$RUNNER_TEMP/assets.txt"
+          (cd "$RUNNER_TEMP/dl" && sha256sum -c "$ASSET.sha256")
+
+      - name: Check the package matches the tag and the repository
+        run: |
+          deb=$RUNNER_TEMP/dl/$ASSET
+          ver=${TAG#v}
+          [ "$(dpkg-deb -f "$deb" Version)" = "$ver" ] || { echo "package version is not $ver"; exit 1; }
+          cfg=$(python3 -I -c 'import json, sys; print(json.load(open(sys.argv[1]))["version"])' config.ini)
+          [ "$cfg" = "$ver" ] || { echo "config.ini version $cfg is not $ver"; exit 1; }
+          x=$RUNNER_TEMP/x
+          mkdir -p "$x/DEBIAN"
+          dpkg-deb -x "$deb" "$x"
+          dpkg-deb -e "$deb" "$x/DEBIAN"
+          while read -r path src; do
+            case "$src" in
+              deb:*) from=$x/${src#deb:} ;;
+              ctl:*) from=$x/DEBIAN/${src#ctl:} ;;
+              *) continue ;;
+            esac
+            cmp "$path" "$from"
+          done < <(grep -v -E '^[[:space:]]*(#|$)' .github/scan/files.txt)
+
+      - name: Scan the repository and the package
+        run: >-
+          bash .github/scan/gate.sh --tree . --files .github/scan/files.txt --deb "$RUNNER_TEMP/dl/$ASSET"
+          --gitleaks "$RUNNER_TEMP/gitleaks/gitleaks" --denylist "$RUNNER_TEMP/denylist.txt"
+
+      - name: Publish
+        run: |
+          now=$(gh api "repos/$GH_REPO/releases/$REL_ID" --jq "$ASSETS_JQ")
+          [ "$now" = "$(cat "$RUNNER_TEMP/assets.txt")" ] || { echo "The draft's assets changed during the checks."; exit 1; }
+          gh api -X PATCH "repos/$GH_REPO/releases/$REL_ID" -F draft=false -f make_latest=true --jq '"Published \(.html_url)"'
+
+      # A failed draft must not stay where anyone with write access could
+      # publish it. Only drafts of this tag: a published release is never
+      # touched.
+      - name: Delete the draft after a failure
+        if: failure() || cancelled()
+        run: |
+          [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || exit 0
+          for id in $(gh api --paginate "repos/$GH_REPO/releases" --jq ".[] | select(.draft and .tag_name == \"$TAG\") | .id"); do
+            gh api -X DELETE "repos/$GH_REPO/releases/$id"
+            echo "Deleted draft release $id of $TAG. Fix the cause, then publish again."
+          done

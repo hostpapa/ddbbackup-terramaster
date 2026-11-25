@@ -1,0 +1,85 @@
+# The store repository's .github/workflows/scan.yml (DDB-447). An admin
+# commits it there (the publishing App has no permission to change
+# workflows), and the build server's publish refuses while that copy differs
+# from this one: change it here first.
+#
+# The same gate the build server runs before a publish (files exactly as
+# listed, gitleaks, our rules), plus gitleaks on the whole history. A push to
+# main ("scan-main") also gets the denylist, from the DDB_DENYLIST secret of
+# the release environment, which only main and v* tags can use. A pull
+# request ("scan", its required check) gets no secrets, so it runs without
+# the denylist; the build server's gate and the release scan apply it, and
+# only the publishing App can change main, so no pull request can be merged
+# outside an emergency (publish/README.md). A backstop
+# for any change that doesn't come from the build server. GitHub-hosted
+# runners only.
+name: scan
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  scan:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Get gitleaks
+        run: bash .github/scan/get-gitleaks.sh "$RUNNER_TEMP/gitleaks"
+
+      - name: Scan the files
+        run: >-
+          bash .github/scan/gate.sh --tree . --files .github/scan/files.txt
+          --gitleaks "$RUNNER_TEMP/gitleaks/gitleaks"
+
+      - name: Scan the history
+        run: >-
+          "$RUNNER_TEMP/gitleaks/gitleaks" git --config .github/scan/gitleaks-config.toml
+          --no-banner --redact --ignore-gitleaks-allow -v .
+
+  scan-main:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Get gitleaks
+        run: bash .github/scan/get-gitleaks.sh "$RUNNER_TEMP/gitleaks"
+
+      - name: Get the denylist
+        env:
+          DENYLIST: ${{ secrets.DDB_DENYLIST }}
+        run: |
+          [ -n "$DENYLIST" ] || { echo "The release environment has no DDB_DENYLIST secret."; exit 1; }
+          printf '%s\n' "$DENYLIST" > "$RUNNER_TEMP/denylist.txt"
+
+      - name: Scan the files
+        run: >-
+          bash .github/scan/gate.sh --tree . --files .github/scan/files.txt
+          --gitleaks "$RUNNER_TEMP/gitleaks/gitleaks" --denylist "$RUNNER_TEMP/denylist.txt"
+
+      - name: Scan the history
+        run: >-
+          "$RUNNER_TEMP/gitleaks/gitleaks" git --config .github/scan/gitleaks-config.toml
+          --no-banner --redact --ignore-gitleaks-allow -v .
