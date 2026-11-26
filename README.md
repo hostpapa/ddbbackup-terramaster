@@ -7,8 +7,8 @@ portal.
 - App id: `ddbbackup`
 - Package: Deb, single package, x86_64
 - Requires: TOS 7.0 or later, and a Data Deposit Box account
-- Publisher: Data Deposit Box Inc., <https://www.datadepositbox.com>
-- Support: <https://www.datadepositbox.com/support>
+- Publisher: Data Deposit Box Inc., <https://datadepositbox.com/>
+- Support: <https://datadepositbox.com/contact/>
 
 The package is published as `ddbbackup_x86_64.deb` in this repository's
 [Releases](../../releases). This repository holds the package's files
